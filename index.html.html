@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MERZA — PORTFOLIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #141414;
+    --bg-3: #1c1c1c;
+    --fg: #f5f5f5;
+    --fg-dim: #888;
+    --fg-faint: #555;
+    --accent: #e63946;
+    --accent-glow: rgba(230, 57, 70, 0.3);
+    --line: #2a2a2a;
+    --display: 'Bebas Neue', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --body: 'Inter Tight', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* CRT scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(255,255,255,0.015) 2px,
+      rgba(255,255,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+    mix-blend-mode: overlay;
+  }
+
+  /* Noise grain */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* === NAV === */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-logo {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    color: var(--fg);
+    text-decoration: none;
+    line-height: 1;
+    position: relative;
+  }
+  .nav-logo::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+  }
+  .nav-links a {
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::before {
+    content: attr(data-num);
+    color: var(--fg-faint);
+    margin-right: 6px;
+    font-size: 10px;
+  }
+
+  .lang-switch {
+    display: flex;
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .lang-switch button {
+    background: transparent;
+    color: var(--fg-dim);
+    border: none;
+    padding: 6px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+  }
+  .lang-switch button.active {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .lang-switch button:not(.active):hover {
+    color: var(--fg);
+  }
+
+  /* === HERO === */
+  #hero {
+    min-height: 100vh;
+    padding: 120px 40px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  /* Grid background */
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  }
+
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 32px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-meta span::before {
+    content: '◆ ';
+    color: var(--accent);
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(80px, 18vw, 280px);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    position: relative;
+    z-index: 2;
+  }
+  .hero-title .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: rise 0.6s ease-out forwards;
+  }
+  .hero-title .letter:nth-child(1) { animation-delay: 0.1s; }
+  .hero-title .letter:nth-child(2) { animation-delay: 0.18s; }
+  .hero-title .letter:nth-child(3) { animation-delay: 0.26s; }
+  .hero-title .letter:nth-child(4) { animation-delay: 0.34s; }
+  .hero-title .letter:nth-child(5) { animation-delay: 0.42s; }
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-subtitle {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 24px;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tagline {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 56px);
+    color: var(--fg);
+    margin-top: 24px;
+    line-height: 1.1;
+    max-width: 900px;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.7s ease-out forwards;
+    letter-spacing: 0.02em;
+  }
+  .hero-tagline span {
+    color: var(--accent);
+  }
+
+  /* Tale of the tape — fight card stats */
+  .tale-of-tape {
+    margin-top: 80px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s ease-out forwards;
+  }
+  .stat-cell {
+    padding: 24px 20px;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 36px;
+    color: var(--fg);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .stat-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* === SECTION === */
+  section {
+    padding: 120px 40px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-tag::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(56px, 9vw, 140px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin-bottom: 60px;
+    color: var(--fg);
+  }
+  .section-title em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* === ABOUT === */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text {
+    font-size: 17px;
+    color: var(--fg);
+    line-height: 1.7;
+  }
+  .about-text p { margin-bottom: 20px; }
+  .about-text strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .info-card {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    padding: 0;
+  }
+  .info-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    border-bottom: 1px solid var(--line);
+    padding: 18px 24px;
+    align-items: center;
+    gap: 20px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .info-val {
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  /* === TRAINING === */
+  .training-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+  }
+  .training-block {
+    padding: 40px 32px;
+    border-right: 1px solid var(--line);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .training-block:last-child { border-right: none; }
+  .training-block:hover {
+    background: var(--bg-2);
+  }
+  .training-block:hover .block-num {
+    color: var(--accent);
+  }
+  .block-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-faint);
+    letter-spacing: 0.2em;
+    transition: color 0.3s;
+  }
+  .block-title {
+    font-family: var(--display);
+    font-size: 38px;
+    color: var(--fg);
+    line-height: 1;
+    margin: 16px 0 20px;
+    letter-spacing: 0.02em;
+  }
+  .block-desc {
+    font-size: 14px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+  }
+
+  .upcoming-fight {
+    margin-top: 60px;
+    border: 1px solid var(--accent);
+    background: linear-gradient(135deg, rgba(230,57,70,0.08), transparent);
+    padding: 40px;
+    position: relative;
+  }
+  .upcoming-fight::before {
+    content: 'БЛИЗИТЬСЯ';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+  }
+  body.lang-en .upcoming-fight::before {
+    content: 'UPCOMING';
+  }
+  .fight-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .fight-title {
+    font-family: var(--display);
+    font-size: 48px;
+    color: var(--fg);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .fight-date {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .countdown {
+    text-align: right;
+  }
+  .countdown-num {
+    font-family: var(--display);
+    font-size: 72px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .countdown-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* === ACADEMIC === */
+  .academic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+  .academic-card {
+    border: 1px solid var(--line);
+    padding: 32px;
+    background: var(--bg-2);
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .academic-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .academic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.4s;
+  }
+  .academic-card:hover::before { width: 100%; }
+  .card-icon {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--fg);
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+  .card-text {
+    font-size: 14px;
+    color: var(--fg-dim);
+    line-height: 1.7;
+  }
+  .card-text strong { color: var(--fg); font-weight: 500; }
+
+  /* === LANGUAGES === */
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--line);
+  }
+  .lang-block {
+    padding: 32px 28px;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .lang-block:last-child { border-right: none; }
+  .lang-name {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+  .lang-level {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .lang-bar {
+    height: 4px;
+    background: var(--bg-3);
+    overflow: hidden;
+  }
+  .lang-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0;
+    transition: width 1.2s ease-out;
+  }
+  .lang-level-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    margin-top: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .lang-level-tag.basic {
+    background: var(--bg-3);
+    color: var(--fg-dim);
+  }
+
+  /* === VAULT === */
+  .vault-list {
+    border-top: 1px solid var(--line);
+  }
+  .vault-item {
+    display: grid;
+    grid-template-columns: 60px 1fr 200px 24px;
+    align-items: center;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    transition: padding 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+  .vault-item:hover {
+    padding-left: 16px;
+    padding-right: 16px;
+    background: var(--bg-2);
+  }
+  .vault-item:hover .vault-name {
+    color: var(--accent);
+  }
+  .vault-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-faint);
+    letter-spacing: 0.1em;
+  }
+  .vault-name {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--fg);
+    letter-spacing: 0.02em;
+    transition: color 0.3s;
+  }
+  .vault-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+  .vault-arrow {
+    font-family: var(--mono);
+    color: var(--fg-faint);
+    font-size: 18px;
+    transition: transform 0.3s, color 0.3s;
+  }
+  .vault-item:hover .vault-arrow {
+    transform: translateX(8px);
+    color: var(--accent);
+  }
+
+  /* === CONTACT === */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .contact-text {
+    font-family: var(--display);
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+    color: var(--fg);
+  }
+  .contact-text em {
+    color: var(--accent);
+    font-style: normal;
+  }
+  .contact-card {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    padding: 40px;
+  }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .contact-email {
+    font-family: var(--mono);
+    font-size: clamp(15px, 1.6vw, 20px);
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+    display: inline-block;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .contact-email:hover {
+    border-color: var(--accent);
+  }
+
+  /* === BROTHERHOOD BLOCK === */
+  .brotherhood {
+    margin-top: 32px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .brotherhood-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .brotherhood-title {
+    font-family: var(--display);
+    font-size: 48px;
+    color: var(--fg);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .brotherhood-title em {
+    color: var(--accent);
+    font-style: normal;
+  }
+  .brotherhood-text {
+    font-size: 15px;
+    color: var(--fg-dim);
+    line-height: 1.7;
+  }
+  .brotherhood-text strong {
+    color: var(--fg);
+    font-weight: 500;
+  }
+  @media (max-width: 768px) {
+    .brotherhood { grid-template-columns: 1fr; }
+  }
+
+  /* === FOOTER === */
+  footer {
+    padding: 40px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-faint);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--line);
+  }
+  footer span { color: var(--accent); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; flex-wrap: wrap; gap: 12px; }
+    .nav-links { display: none; }
+    section { padding: 80px 20px; }
+    #hero { padding: 100px 20px 60px; }
+    .tale-of-tape { grid-template-columns: repeat(2, 1fr); }
+    .stat-cell { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stat-cell:nth-child(2n) { border-right: none; }
+    .stat-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .about-grid, .academic-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .training-grid, .lang-grid { grid-template-columns: 1fr; }
+    .training-block, .lang-block { border-right: none; border-bottom: 1px solid var(--line); }
+    .training-block:last-child, .lang-block:last-child { border-bottom: none; }
+    .fight-content { grid-template-columns: 1fr; gap: 24px; }
+    .countdown { text-align: left; }
+    .vault-item { grid-template-columns: 30px 1fr 24px; }
+    .vault-tag { display: none; }
+  }
+
+  /* === LANG VISIBILITY === */
+  /* За замовчуванням: ховаємо EN, показуємо UA */
+  [data-lang="en"] { display: none !important; }
+  [data-lang="uk"] { display: revert; }
+
+  /* В EN режимі: ховаємо UA, показуємо EN */
+  body.lang-en [data-lang="uk"] { display: none !important; }
+  body.lang-en [data-lang="en"] { display: revert !important; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">M.MERZA</a>
+  <div class="nav-links">
+    <a href="#about" data-num="01"><span data-lang="uk">Про</span><span data-lang="en">About</span></a>
+    <a href="#training" data-num="02"><span data-lang="uk">Зал</span><span data-lang="en">Training</span></a>
+    <a href="#academic" data-num="03"><span data-lang="uk">Освіта</span><span data-lang="en">Academic</span></a>
+    <a href="#languages" data-num="04"><span data-lang="uk">Мови</span><span data-lang="en">Languages</span></a>
+    <a href="#vault" data-num="05"><span data-lang="uk">Скарб</span><span data-lang="en">Vault</span></a>
+    <a href="#contact" data-num="06"><span data-lang="uk">Зв'язок</span><span data-lang="en">Contact</span></a>
+  </div>
+  <div class="lang-switch">
+    <button class="active" onclick="setLang('uk', this)">UA</button>
+    <button onclick="setLang('en', this)">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-meta">
+    <span data-lang="uk">УЖГОРОД, УКРАЇНА</span>
+    <span data-lang="en">UZHHOROD, UKRAINE</span>
+    <span data-lang="uk">СУПЕРВАЖКА ВАГА</span>
+    <span data-lang="en">SUPER HEAVYWEIGHT</span>
+    <span>EST. 2008</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="letter">M</span><span class="letter">E</span><span class="letter">R</span><span class="letter">Z</span><span class="letter">A</span>
+  </h1>
+
+  <div class="hero-subtitle">
+    <span data-lang="uk">МАКСИМ · СТУДЕНТ · БОКСЕР</span>
+    <span data-lang="en">MAKSYM · STUDENT · BOXER</span>
+  </div>
+
+  <div class="hero-tagline" data-lang="uk">
+    Дисципліна в залі. <span>Точність</span> в навчанні. <span>Витримка</span> в усьому.
+  </div>
+  <div class="hero-tagline" data-lang="en">
+    Discipline in the gym. <span>Precision</span> in studies. <span>Endurance</span> in everything.
+  </div>
+
+  <!-- TALE OF THE TAPE -->
+  <div class="tale-of-tape">
+    <div class="stat-cell">
+      <div class="stat-label" data-lang="uk">Вік</div>
+      <div class="stat-label" data-lang="en">Age</div>
+      <div class="stat-value">17</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label" data-lang="uk">Вагова</div>
+      <div class="stat-label" data-lang="en">Weight Class</div>
+      <div class="stat-value">95KG+</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label" data-lang="uk">Курс</div>
+      <div class="stat-label" data-lang="en">Year</div>
+      <div class="stat-value">1</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label" data-lang="uk">Англ. рівень</div>
+      <div class="stat-label" data-lang="en">English</div>
+      <div class="stat-value">C1</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">
+    <span data-lang="uk">01 / Про мене</span>
+    <span data-lang="en">01 / About</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="uk">Хто <em>стоїть</em><br>за іменем.</span>
+    <span data-lang="en">The man <em>behind</em><br>the name.</span>
+  </h2>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p data-lang="uk">
+        Мене звати <strong>Максим Мерза</strong>. Мені 17 років, живу в Ужгороді — місті на заході України, де гори зустрічаються з кордоном.
+      </p>
+      <p data-lang="uk">
+        Студент <strong>1 курсу</strong> Ужгородського національного університету за спеціальністю <strong>«Міжнародні економічні відносини»</strong>. Закінчив <strong>Ліцей імені Т. Г. Шевченка</strong>.
+      </p>
+      <p data-lang="uk">
+        Серйозно займаюсь <strong>боксом</strong> у важкій / суперважкій ваговій категорії. Тренуюсь у клубі під керівництвом тренера, працюю над фізичною формою через структурований тренувальний спліт.
+      </p>
+      <p data-lang="uk">
+        Планую продовжити освіту в <strong>Klagenfurt, Австрія</strong>. Володію англійською на рівні <strong>C1</strong>, поступово опановую німецьку.
+      </p>
+
+      <p data-lang="en">
+        My name is <strong>Maksym Merza</strong>. I'm 17 years old, based in Uzhhorod — a city in western Ukraine where mountains meet the border.
+      </p>
+      <p data-lang="en">
+        First-year student at <strong>Uzhhorod National University</strong>, majoring in <strong>International Economic Relations</strong>. Graduated from <strong>Taras Shevchenko Lyceum</strong>.
+      </p>
+      <p data-lang="en">
+        I train seriously in <strong>boxing</strong>, heavyweight / super heavyweight class. Working under a coach at a club, structuring my training in a disciplined split.
+      </p>
+      <p data-lang="en">
+        Planning to continue my studies in <strong>Klagenfurt, Austria</strong>. English at <strong>C1</strong> level, slowly building up my German.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Локація</div>
+        <div class="info-key" data-lang="en">Location</div>
+        <div class="info-val">Uzhhorod, UA → Klagenfurt, AT</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Університет</div>
+        <div class="info-key" data-lang="en">University</div>
+        <div class="info-val" data-lang="uk">УжНУ · МЕВ · 1 курс</div>
+        <div class="info-val" data-lang="en">UzhNU · IER · Year 1</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Школа</div>
+        <div class="info-key" data-lang="en">High School</div>
+        <div class="info-val" data-lang="uk">Ліцей ім. Т. Г. Шевченка</div>
+        <div class="info-val" data-lang="en">Taras Shevchenko Lyceum</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Спорт</div>
+        <div class="info-key" data-lang="en">Sport</div>
+        <div class="info-val" data-lang="uk">Бокс · 95 кг+</div>
+        <div class="info-val" data-lang="en">Boxing · 95 kg+</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Англійська</div>
+        <div class="info-key" data-lang="en">English</div>
+        <div class="info-val">C1 (Advanced)</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key" data-lang="uk">Цілі</div>
+        <div class="info-key" data-lang="en">Goals</div>
+        <div class="info-val" data-lang="uk">Освіта, бокс, дисципліна</div>
+        <div class="info-val" data-lang="en">Education, boxing, discipline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINING -->
+<section id="training">
+  <div class="section-tag">
+    <span data-lang="uk">02 / Тренування</span>
+    <span data-lang="en">02 / Training</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="uk">Робота <em>в залі.</em></span>
+    <span data-lang="en">Work <em>in the ring.</em></span>
+  </h2>
+
+  <div class="training-grid">
+    <div class="training-block">
+      <div class="block-num">/ 01</div>
+      <div class="block-title" data-lang="uk">БОКС</div>
+      <div class="block-title" data-lang="en">BOXING</div>
+      <div class="block-desc" data-lang="uk">
+        Тренування під <strong>Ужгородською федерацією боксу</strong>. Робота з тренером, технічна підготовка, спаринги. Категорія: важка / суперважка (95 кг+).
+      </div>
+      <div class="block-desc" data-lang="en">
+        Training under the <strong>Uzhhorod Boxing Federation</strong>. Work with the coach, technique, sparring. Heavyweight / super heavyweight (95 kg+).
+      </div>
+    </div>
+    <div class="training-block">
+      <div class="block-num">/ 02</div>
+      <div class="block-title" data-lang="uk">ЗАЛ</div>
+      <div class="block-title" data-lang="en">GYM</div>
+      <div class="block-desc" data-lang="uk">
+        Двотижневий чергуючий тренувальний спліт. Силова робота на верх / низ. Контроль навантаження і відновлення.
+      </div>
+      <div class="block-desc" data-lang="en">
+        Two-week alternating training split. Upper / lower body strength work. Strict load and recovery management.
+      </div>
+    </div>
+    <div class="training-block">
+      <div class="block-num">/ 03</div>
+      <div class="block-title" data-lang="uk">ОФП</div>
+      <div class="block-title" data-lang="en">CONDITIONING</div>
+      <div class="block-desc" data-lang="uk">
+        Загальна фізична підготовка. Кардіо, координація, витривалість. Постійна базова робота під специфіку боксу.
+      </div>
+      <div class="block-desc" data-lang="en">
+        General physical conditioning. Cardio, coordination, endurance. Always-on base layer for boxing demands.
+      </div>
+    </div>
+  </div>
+
+  <div class="upcoming-fight">
+    <div class="fight-content">
+      <div>
+        <div class="fight-title" data-lang="uk">Кубок майстрів</div>
+        <div class="fight-title" data-lang="en">Masters Cup</div>
+        <div class="fight-date" data-lang="uk">До 7 ЛИПНЯ · Аматорський турнір</div>
+        <div class="fight-date" data-lang="en">Until JULY 7 · Amateur tournament</div>
+      </div>
+      <div class="countdown">
+        <div class="countdown-num" id="countdown-days">—</div>
+        <div class="countdown-label" data-lang="uk">днів до старту</div>
+        <div class="countdown-label" data-lang="en">days to go</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="brotherhood">
+    <div>
+      <div class="brotherhood-label" data-lang="uk">// БРАТЕРСТВО</div>
+      <div class="brotherhood-label" data-lang="en">// BROTHERHOOD</div>
+      <div class="brotherhood-title">
+        <span data-lang="uk">Не самі. <em>Командою.</em></span>
+        <span data-lang="en">Not alone. <em>Together.</em></span>
+      </div>
+    </div>
+    <div>
+      <div class="brotherhood-text" data-lang="uk">
+        Зал — це не лише про мене. <strong>Ужгородська федерація боксу</strong> дала мені людей, з якими я зріс не тільки як спортсмен, але й як особистість. Серед моїх друзів — спортсмени з <strong>серйозними досягненнями на українському і міжнародному рівні</strong>. Вони стали для мене орієнтиром і причиною працювати ще наполегливіше. Командний дух — те, без чого не виходить нічого вартісного.
+      </div>
+      <div class="brotherhood-text" data-lang="en">
+        The gym is not only about me. The <strong>Uzhhorod Boxing Federation</strong> gave me people I have grown with — not only as an athlete, but as a person. Among my friends are fighters with <strong>serious achievements at the Ukrainian and international level</strong>. They have become both a benchmark and a reason to push harder. Team spirit — without it, nothing worthwhile gets done.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACADEMIC -->
+<section id="academic">
+  <div class="section-tag">
+    <span data-lang="uk">03 / Освіта та діяльність</span>
+    <span data-lang="en">03 / Academic & Activity</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="uk">Голова працює <em>так само.</em></span>
+    <span data-lang="en">The mind works <em>the same way.</em></span>
+  </h2>
+
+  <div class="academic-grid">
+    <div class="academic-card">
+      <div class="card-icon">/ 01 — STUDIES</div>
+      <div class="card-title" data-lang="uk">МІЖНАРОДНІ ЕКОНОМІЧНІ ВІДНОСИНИ</div>
+      <div class="card-title" data-lang="en">INTERNATIONAL ECONOMIC RELATIONS</div>
+      <div class="card-text" data-lang="uk">
+        Перший курс УжНУ. Поглиблено працюю з <strong>мікроекономікою</strong>: LRAC, монополія, deadweight loss, досконала конкуренція, еластичність попиту. Готувався до модульних робіт за методичкою Шинкаря.
+      </div>
+      <div class="card-text" data-lang="en">
+        First year at UzhNU. Strong focus on <strong>microeconomics</strong>: LRAC, monopoly, deadweight loss, perfect competition, elasticity of demand. Prepared full module exam answers under Shynkar's curriculum.
+      </div>
+    </div>
+
+    <div class="academic-card">
+      <div class="card-icon">/ 02 — INTERPRETING</div>
+      <div class="card-title" data-lang="uk">МІЖНАРОДНА КОНФЕРЕНЦІЯ</div>
+      <div class="card-title" data-lang="en">INTERNATIONAL CONFERENCE</div>
+      <div class="card-text" data-lang="uk">
+        Минулого року працював <strong>перекладачем на міжнародній конференції</strong>. Робота наживо у двосторонньому форматі, високий темп, відповідальність за точність змісту в обох мовах.
+      </div>
+      <div class="card-text" data-lang="en">
+        Last year I served as an <strong>interpreter at an international conference</strong>. Live two-way work, high tempo, full responsibility for accuracy in both languages.
+      </div>
+    </div>
+
+    <div class="academic-card">
+      <div class="card-icon">/ 03 — VOLUNTEER</div>
+      <div class="card-title" data-lang="uk">ПЕРЕКЛАДАЧ-ВОЛОНТЕР</div>
+      <div class="card-title" data-lang="en">VOLUNTEER INTERPRETER</div>
+      <div class="card-text" data-lang="uk">
+        Працював перекладачем для <strong>волонтерів зі США</strong>, які приїжджали в Україну. Жива практика англійської у реальному двосторонньому контексті.
+      </div>
+      <div class="card-text" data-lang="en">
+        Served as an interpreter for <strong>American volunteers</strong> visiting Ukraine. Live practice of English in real two-way settings.
+      </div>
+    </div>
+
+    <div class="academic-card">
+      <div class="card-icon">/ 04 — COACHING</div>
+      <div class="card-title" data-lang="uk">ТРЕНЕРСЬКА СПРАВА</div>
+      <div class="card-title" data-lang="en">COACHING</div>
+      <div class="card-text" data-lang="uk">
+        Здобуваю <strong>знання у тренерській сфері</strong>. Вивчаю методику тренувань, періодизацію, біомеханіку, фізіологію навантаження. Мета — глибше розуміти процес зсередини, не тільки як спортсмен, а й як той, хто здатен будувати програми.
+      </div>
+      <div class="card-text" data-lang="en">
+        Building up <strong>knowledge in coaching</strong>. Studying training methodology, periodization, biomechanics, physiology of load. The goal — to understand the process from the inside, not just as an athlete, but as someone capable of building programs.
+      </div>
+    </div>
+
+    <div class="academic-card">
+      <div class="card-icon">/ 05 — CODING</div>
+      <div class="card-title" data-lang="uk">ПРОГРАМУВАННЯ</div>
+      <div class="card-title" data-lang="en">PROGRAMMING</div>
+      <div class="card-text" data-lang="uk">
+        Цікавлюсь <strong>програмуванням</strong>. Проходив <strong>школи програмування</strong>, працюю з кодом і алгоритмами як з ще одним інструментом мислення. Розглядаю його як міст між економікою і технологіями.
+      </div>
+      <div class="card-text" data-lang="en">
+        Interested in <strong>programming</strong>. Completed <strong>programming schools</strong>, work with code and algorithms as another tool for thinking. I see it as a bridge between economics and technology.
+      </div>
+    </div>
+
+    <div class="academic-card">
+      <div class="card-icon">/ 06 — PROJECTS</div>
+      <div class="card-title" data-lang="uk">МЕРЕЖЕВА ДЕМОКРАТІЯ</div>
+      <div class="card-title" data-lang="en">NETWORK DEMOCRACY</div>
+      <div class="card-text" data-lang="uk">
+        Авторська презентація з україномовною озвучкою. Розкриття концепції цифрової демократії — як інтернет та мережі змінюють участь громадян у політичних процесах.
+      </div>
+      <div class="card-text" data-lang="en">
+        Authored presentation with Ukrainian-language narration. Concept of digital democracy — how the internet and networks reshape civic participation.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="languages">
+  <div class="section-tag">
+    <span data-lang="uk">04 / Мови</span>
+    <span data-lang="en">04 / Languages</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="uk">Як я <em>говорю.</em></span>
+    <span data-lang="en">How I <em>speak.</em></span>
+  </h2>
+
+  <div class="lang-grid">
+    <div class="lang-block">
+      <div class="lang-name" data-lang="uk">УКРАЇНСЬКА</div>
+      <div class="lang-name" data-lang="en">UKRAINIAN</div>
+      <div class="lang-level" data-lang="uk">Рідна мова</div>
+      <div class="lang-level" data-lang="en">Native</div>
+      <div class="lang-bar"><div class="lang-bar-fill" data-pct="100"></div></div>
+      <div class="lang-level-tag">NATIVE</div>
+    </div>
+    <div class="lang-block">
+      <div class="lang-name" data-lang="uk">АНГЛІЙСЬКА</div>
+      <div class="lang-name" data-lang="en">ENGLISH</div>
+      <div class="lang-level" data-lang="uk">Підтверджений рівень</div>
+      <div class="lang-level" data-lang="en">Certified level</div>
+      <div class="lang-bar"><div class="lang-bar-fill" data-pct="90"></div></div>
+      <div class="lang-level-tag">C1 / ADVANCED</div>
+    </div>
+    <div class="lang-block">
+      <div class="lang-name" data-lang="uk">НІМЕЦЬКА</div>
+      <div class="lang-name" data-lang="en">GERMAN</div>
+      <div class="lang-level" data-lang="uk">Базове розуміння</div>
+      <div class="lang-level" data-lang="en">Basic comprehension</div>
+      <div class="lang-bar"><div class="lang-bar-fill" data-pct="25"></div></div>
+      <div class="lang-level-tag basic" data-lang="uk">У РОЗВИТКУ</div>
+      <div class="lang-level-tag basic" data-lang="en">IN PROGRESS</div>
+    </div>
+  </div>
+</section>
+
+<!-- VAULT -->
+<section id="vault">
+  <div class="section-tag">
+    <span data-lang="uk">05 / Онлайн скарбничка</span>
+    <span data-lang="en">05 / Online Vault</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="uk">Те, що <em>зберігаю.</em></span>
+    <span data-lang="en">What I <em>keep.</em></span>
+  </h2>
+
+  <div class="vault-list">
+    <a class="vault-item" href="https://www.epravda.com.ua/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 01</div>
+      <div>
+        <div class="vault-name">ЕКОНОМІЧНА ПРАВДА</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">ЕКОНОМІКА · НОВИНИ</div>
+      <div class="vault-tag" data-lang="en">ECONOMY · NEWS</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://www.coursera.org/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 02</div>
+      <div>
+        <div class="vault-name">COURSERA</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">ОСВІТА · КУРСИ</div>
+      <div class="vault-tag" data-lang="en">EDUCATION · MOOC</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://prometheus.org.ua/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 03</div>
+      <div>
+        <div class="vault-name">PROMETHEUS</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">УКР · КУРСИ</div>
+      <div class="vault-tag" data-lang="en">UA · COURSES</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://www.bbc.com/learningenglish" target="_blank" rel="noopener">
+      <div class="vault-num">/ 04</div>
+      <div>
+        <div class="vault-name">BBC LEARNING ENGLISH</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">МОВА · ПРАКТИКА</div>
+      <div class="vault-tag" data-lang="en">LANGUAGE · PRACTICE</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://www.deutsche-welle.com/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 05</div>
+      <div>
+        <div class="vault-name">DEUTSCHE WELLE</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">НІМ · НОВИНИ</div>
+      <div class="vault-tag" data-lang="en">DE · NEWS</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://www.aau.at/en/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 06</div>
+      <div>
+        <div class="vault-name">UNIVERSITY OF KLAGENFURT</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">МЕТА · АВСТРІЯ</div>
+      <div class="vault-tag" data-lang="en">GOAL · AUSTRIA</div>
+      <div class="vault-arrow">→</div>
+    </a>
+    <a class="vault-item" href="https://www.boxing-news.org/" target="_blank" rel="noopener">
+      <div class="vault-num">/ 07</div>
+      <div>
+        <div class="vault-name">BOXING NEWS</div>
+      </div>
+      <div class="vault-tag" data-lang="uk">БОКС</div>
+      <div class="vault-tag" data-lang="en">BOXING</div>
+      <div class="vault-arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">
+    <span data-lang="uk">06 / Контакти</span>
+    <span data-lang="en">06 / Contact</span>
+  </div>
+
+  <div class="contact-grid">
+    <div class="contact-text">
+      <span data-lang="uk">Маєш питання?<br><em>Пиши на пошту.</em></span>
+      <span data-lang="en">Got a question?<br><em>Drop me a line.</em></span>
+    </div>
+    <div class="contact-card">
+      <div class="contact-label" data-lang="uk">Електронна пошта</div>
+      <div class="contact-label" data-lang="en">Email</div>
+      <a class="contact-email" href="mailto:maksym.merza@student.uzhnu.edu.ua">
+        maksym.merza@student.uzhnu.edu.ua
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 MAKSYM MERZA</span> · <span data-lang="uk">Зроблено в Ужгороді</span><span data-lang="en">Made in Uzhhorod</span>
+</footer>
+
+<script>
+  function setLang(lang, btn) {
+    document.body.classList.toggle('lang-en', lang === 'en');
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Animate language bars on scroll into view
+  const langObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.lang-bar-fill').forEach(b => {
+          b.style.width = b.dataset.pct + '%';
+        });
+        langObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const langSection = document.getElementById('languages');
+  if (langSection) langObserver.observe(langSection);
+
+  // Countdown to July 7
+  function updateCountdown() {
+    const now = new Date();
+    const target = new Date(now.getFullYear(), 6, 7); // 6 = July (0-indexed)
+    if (target < now) target.setFullYear(target.getFullYear() + 1);
+    const days = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    const el = document.getElementById('countdown-days');
+    if (el) el.textContent = days;
+  }
+  updateCountdown();
+</script>
+
+</body>
+</html>
